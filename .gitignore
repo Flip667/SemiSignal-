@@ -1,0 +1,6 @@
+.env
+edgar_cache.sqlite
+__pycache__/
+*.pyc
+.venv/
+venv/

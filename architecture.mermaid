@@ -1,0 +1,68 @@
+flowchart TB
+    User([👤 User<br/>analysis query]) --> API
+
+    subgraph APP["SemiSignal Application"]
+        API[Streamlit<br/>chat UI]
+    end
+
+    API <--> FOUNDRY
+
+    subgraph FOUNDRY["🧠 Microsoft Foundry — Agent Service"]
+        direction TB
+        MODEL[Claude Opus 4.8 model<br/>reasoning + tool calling]
+
+        subgraph LOOP["Multi-step reasoning loop"]
+            direction LR
+            P[1. PLAN] --> R[2. RETRIEVE] --> G[3. GROUND] --> A[4. ANALYZE] --> V[5. VERIFY] --> S[6. SYNTHESIZE]
+        end
+
+        MODEL --- LOOP
+    end
+
+    subgraph TOOLS["🔧 Tools (function calling)"]
+        direction TB
+        T1[list_filings]
+        T2[fetch_filing_section]
+        T3[scan_geopolitical_exposure]
+        T4[get_financial_metric]
+    end
+
+    FOUNDRY <--> TOOLS
+
+    subgraph RAG["📚 Grounding"]
+        VS[(Vector store /<br/>Azure AI Search)]
+    end
+
+    FOUNDRY <--> VS
+
+    subgraph DATA["Data sources"]
+        direction TB
+        EDGAR[(SEC EDGAR API<br/>User-Agent required<br/>10 req/s max)]
+        CACHE[(Local cache<br/>SQLite — filings)]
+    end
+
+    T1 --> CACHE
+    T2 --> CACHE
+    T4 --> EDGAR
+    CACHE <--> EDGAR
+    T2 -.indexes chunks.-> VS
+
+    FOUNDRY ==> OUT
+
+    subgraph OUTPUT["Output"]
+        OUT[📄 Structured macro note<br/>every claim sourced<br/>+ no-advice disclaimer]
+    end
+
+    OUT --> API
+
+    classDef foundry fill:#0078D4,stroke:#004578,color:#fff
+    classDef tool fill:#50E6FF,stroke:#0078D4,color:#000
+    classDef data fill:#FFB900,stroke:#D83B01,color:#000
+    classDef out fill:#107C10,stroke:#0B5A0B,color:#fff
+    classDef loop fill:#E6F4FF,stroke:#0078D4,color:#000
+
+    class MODEL foundry
+    class T1,T2,T3,T4 tool
+    class EDGAR,CACHE,VS data
+    class OUT out
+    class P,R,G,A,V,S loop
