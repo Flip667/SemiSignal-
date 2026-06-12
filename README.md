@@ -51,4 +51,4 @@ streamlit run app.py
 
 ## Demo
 
-Video link: _(to be added — YouTube/Vimeo, 5 min max)_
+[![SemiSignal Demo](https://img.youtube.com/vi/LJn7Q2zGSgU/0.jpg)](https://youtu.be/LJn7Q2zGSgU)
